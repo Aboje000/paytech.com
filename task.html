@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily earnings</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="payimages/code.jpg" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h1>Complete Tasks & Claim Your Reward</h1>
+
+        <div class="task">
+            <h2>Follow us on TikTok</h2>
+            <button class="button" id="tiktok-follow">Follow TikTok</button>
+            <button id="tiktok-claim" class="claim-button" onclick="addBalance();hideButton()">Claim Reward</button>
+        </div>
+
+        <div class="task">
+            <h2>Subscribe to our YouTube Channel</h2>
+            <button class="button" id="youtube-follow">Subscribe YouTube</button>
+            <button id="youtube-claim" class="claim-button" onclick="addBalance();hideButton()">Claim Reward</button>
+        </div>
+
+        <div class="task">
+            <h2>Follow us on Facebook</h2>
+            <button class="button" id="facebook-follow">Follow Facebook</button>
+            <button id="facebook-claim" class="claim-button" onclick="addBalance();hideButton()">Claim Reward</button>
+           
+           
+ 
+           
+           
+        </div>
+    </div>
+   
+    <script src="script.js"></script>
+
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.task {
+    margin-bottom: 20px;
+}
+
+.task h2 {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.claim-button {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.claim-button:hover {
+    background-color: #218838;
+}
+       
+    </style>
+    <script>
+        let number= 5;
+   document.addEventListener('DOMContentLoaded', () => {
+    setupTask('tiktok', 'https://www.tiktok.com/@example');
+    setupTask('youtube', 'https://www.youtube.com/c/example');
+    setupTask('facebook', 'https://www.facebook.com/example');
+});
+
+function setupTask(platform, url) {
+    const followButton = document.getElementById(`${platform}-follow`);
+    const claimButton = document.getElementById(`${platform}-claim`);
+
+    followButton.addEventListener('click', () => {
+        // Redirect user to the URL in a new tab
+        window.open(url, '_blank');
+       
+        // Enable the claim button after the user clicks the follow button
+        claimButton.disabled = false;
+        claimButton.classList.remove('disabled'); // Remove the disabled styling
+    });
+
+    // Add an event listener to the claim button that only works if it's not disabled
+    claimButton.addEventListener('click', () => {
+        if (!claimButton.disabled) {
+            alert(`Reward for ${platform.charAt(0).toUpperCase() + platform.slice(1)} claimed!`);
+            // Additional logic for claiming the reward can be added here
+            claimButton.disabled = true;  // Optionally disable the claim button after use
+            claimButton.classList.add('disabled'); // Optionally reapply the disabled styling
+        }
+    });
+}
+
+
+
+function getBalance() {
+            return parseFloat(localStorage.getItem('balance')) || 0;
+        }
+
+        function addBalance() {
+            const amount = parseFloat(number);
+            if (!isNaN(amount) && amount > 0) {
+                const currentBalance = getBalance();
+                const newBalance = currentBalance + amount;
+                localStorage.setItem('balance', newBalance.toFixed(2));
+                alert(`$${amount.toFixed(2)} added!`);
+                window.location.href = 'hompage.html';
+            } else {
+                alert('Please enter a valid amount.');
+            }
+        }
+       
+       
+       
+       
+       
+       
+        /*hide button*/
+         function hideButton() {
+        alert("You have completed today's task,wait till tomorrow to complete another ")
+            // Hide the button
+            document.getElementById('hideButton').style.display = 'none';
+
+            // Store the current time in localStorage
+            const hideTime = new Date().getTime();
+            localStorage.setItem('hideTime', hideTime);
+
+            // Set a timeout to show the button again after 24 hours (86400000 milliseconds)
+            setTimeout(() => {
+                document.getElementById('hideButton').style.display = 'block';
+                localStorage.removeItem('hideTime');
+            }, 86400000); // 24 hours in milliseconds
+        }
+
+        function checkButtonVisibility() {
+            const hideTime = localStorage.getItem('hideTime');
+
+            if (hideTime) {
+                const currentTime = new Date().getTime();
+                const elapsed = currentTime - hideTime;
+
+                if (elapsed < 86400000) { // 24 hours in milliseconds
+                    // Button should still be hidden
+                    document.getElementById('hideButton').style.display = 'none';
+
+                    // Calculate remaining time and set timeout to show the button
+                    const remainingTime = 86400000 - elapsed;
+                    setTimeout(() => {
+                        document.getElementById('hideButton').style.display = 'block';
+                        localStorage.removeItem('hideTime');
+                    }, remainingTime);
+                } else {
+                    // 24 hours have passed, show the button
+                    document.getElementById('hideButton').style.display = 'block';
+                    localStorage.removeItem('hideTime');
+                }
+            }
+        }
+
+        // Check button visibility when the page loads
+        window.onload = checkButtonVisibility;
+    </script>
+</body>
+</html>
